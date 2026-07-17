@@ -1,0 +1,18 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Bind-mount the project so edits on the host are seen in the container.
+      - .:/app
+      # Anonymous volume keeps the container's node_modules from being
+      # clobbered by the host bind mount above.
+      - /app/node_modules
+    environment:
+      # Reliable hot reload for bind mounts on Linux.
+      - WATCHPACK_POLLING=true
+      - NODE_ENV=development
+    restart: unless-stopped
