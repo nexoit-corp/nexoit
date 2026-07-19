@@ -11,8 +11,13 @@ services:
       # Anonymous volume keeps the container's node_modules from being
       # clobbered by the host bind mount above.
       - /app/node_modules
+    # Turbopack (the default since Next 16) doesn't pick up file changes
+    # through a bind mount, and it ignores WATCHPACK_POLLING. Run webpack in
+    # the container so polling works; the host keeps using Turbopack via
+    # `npm run dev`.
+    command: ["npx", "next", "dev", "--webpack", "-H", "0.0.0.0"]
     environment:
-      # Reliable hot reload for bind mounts on Linux.
+      # Reliable hot reload for bind mounts (webpack only).
       - WATCHPACK_POLLING=true
       - NODE_ENV=development
     restart: unless-stopped
